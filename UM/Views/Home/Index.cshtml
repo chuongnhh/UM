@@ -1,31 +1,116 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Trang chủ";
+}
+@section styles{
+
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+}
+@section scripts{
+    <script src="~/Scripts/mustache.js"></script>
+    <script>
+        $('form').on('submit', function (e) {
+            e.preventDefault();
+
+            var data = new FormData(this);
+
+            $.ajax({
+                type: 'post',
+                url: '/home/upload',
+                data: data,
+                success: function (res) {
+                    //console.log(res.data);
+
+                    var data = res.data;
+                    var rendered = '';
+                    var template = $('#template').html();
+                    $.each(data, function (i, item) {
+                        console.log(item);
+
+                        rendered += Mustache.render(template, {
+                            Id: i + 1,
+                            HoTen: item.HoTen,
+                            DienThoai: item.DienThoai,
+
+                            ThoiGian1: item.ThoiGian1,
+                            Ca1: item.Ca1,
+                            ThoiGian2: item.ThoiGian2,
+                            Ca2: item.Ca2,
+                            ThoiGian3: item.ThoiGian3,
+                            Ca3: item.Ca3,
+                            Ngay: item.Ngay
+                        });
+                    });
+                    console.log(rendered);
+                    $('#target').html(rendered);
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+        })
+    </script>
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">chuongnh</a>
+        </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form action="/home/upload" enctype="multipart/form-data" class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="file" class="form-control" name="UploadedFile" id="UploadedFile">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Tải lên...</button>
+            </form>
+            <form action="" enctype="multipart/form-data" class="navbar-form navbar-right">
+                @*<div class="form-group">
+                        <input type="file" hidden="hidden" class="form-control" name="UploadedFile" id="UploadedFile">
+                    </div>*@
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/home/download'"><i class="fa fa-download"></i> Tính lương</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/home/download1'"><i class="fa fa-download"></i> Gộp theo tuần</button>
+            </form>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</nav>
+
+<div class="container">
+    <table class="table table-responsive table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ tên</th>
+                <th>Điện thoại</th>
+                <th>Ca sáng</th>
+                <th>Công việc</th>
+                <th>Ca chiều</th>
+                <th>Công việc</th>
+                <th>Ca tối</th>
+                <th>Công việc</th>
+            </tr>
+        </thead>
+        <tbody id="target"></tbody>
+    </table>
 </div>
+<script id="template" type="x-tmpl-mustache">
+    <tr>
+        <td>{{Id}}</td>
+        <td>{{HoTen}}</td>
+        <td>{{DienThoai}}</td>
+        <td>{{ThoiGian1}}</td>
+        <td>{{Ca1}}</td>
+        <td>{{ThoiGian2}}</td>
+        <td>{{Ca2}}</td>
+        <td>{{ThoiGian3}}</td>
+        <td>{{Ca3}}</td>
+    </tr>
+</script>
