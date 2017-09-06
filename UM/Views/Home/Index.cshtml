@@ -2,12 +2,31 @@
     ViewBag.Title = "Trang chủ";
 }
 @section styles{
-
+    <link href="~/Content/alertifyjs/alertify.min.css" rel="stylesheet" />
+    @*<link href="~/Content/alertifyjs/themes/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/Content/alertifyjs/themes/default.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
 }
 @section scripts{
+    <script src="~/Scripts/alertify.min.js"></script>
     <script src="~/Scripts/mustache.js"></script>
     <script>
+        //alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
+        //    'Bạn chưa tải tệp lên mừ, làm sao mà tui xử lý đây!').set('label', 'Tôi đã hiểu rồi');
+
+        function notify() {
+            console.log('notify');
+            alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
+                'Bạn chưa tải tệp lên mừ, làm sao mà tui xử lý đây!').set('label', 'Tôi đã hiểu rồi');
+        }
+
+        $('#download').off('click').on('click', notify);
+        $('#download1').off('click').on('click', notify);
+
+        $('#UploadedFile').change(function () {
+            $('#submit').click();
+        });
+
         $('form').on('submit', function (e) {
             e.preventDefault();
 
@@ -18,30 +37,45 @@
                 url: '/home/upload',
                 data: data,
                 success: function (res) {
-                    //console.log(res.data);
+                    console.log(res.status);
+                    if (res.status == false) {
+                        alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
+                            'Bạn chưa chọn tệp hoặc là tệp không đúng định dạng, bạn vui lòng kiểm tra lại trước khi tải lên.').set('label', 'Tôi đã hiểu rồi');
 
-                    var data = res.data;
-                    var rendered = '';
-                    var template = $('#template').html();
-                    $.each(data, function (i, item) {
-                        console.log(item);
+                        $('#download').off('click').on('click', notify);
+                        $('#download1').off('click').on('click', notify);
+                    }
+                    else {
+                        var data = res.data;
+                        var rendered = '';
+                        var template = $('#template').html();
+                        $.each(data, function (i, item) {
+                            rendered += Mustache.render(template, {
+                                Id: i + 1,
+                                HoTen: item.HoTen,
+                                DienThoai: item.DienThoai,
 
-                        rendered += Mustache.render(template, {
-                            Id: i + 1,
-                            HoTen: item.HoTen,
-                            DienThoai: item.DienThoai,
-
-                            ThoiGian1: item.ThoiGian1,
-                            Ca1: item.Ca1,
-                            ThoiGian2: item.ThoiGian2,
-                            Ca2: item.Ca2,
-                            ThoiGian3: item.ThoiGian3,
-                            Ca3: item.Ca3,
-                            Ngay: item.Ngay
+                                ThoiGian1: item.ThoiGian1,
+                                Ca1: item.Ca1,
+                                ThoiGian2: item.ThoiGian2,
+                                Ca2: item.Ca2,
+                                ThoiGian3: item.ThoiGian3,
+                                Ca3: item.Ca3,
+                                KickSale: item.KickSale,
+                                Ngay: item.Ngay
+                            });
                         });
-                    });
-                    console.log(rendered);
-                    $('#target').html(rendered);
+                        $('#target').html(rendered);
+
+                        $('#download').off('click').on('click', function () {
+                            console.log('download');
+                            window.location.href = '/home/download';
+                        });
+                        $('#download1').off('click').on('click', function () {
+                            console.log('download1');
+                            window.location.href = '/home/download1';
+                        });
+                    }
                 },
                 cache: false,
                 contentType: false,
@@ -70,14 +104,15 @@
                 <div class="form-group">
                     <input type="file" class="form-control" name="UploadedFile" id="UploadedFile">
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Tải lên...</button>
+                <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Tải lên...</button>
             </form>
             <form action="" enctype="multipart/form-data" class="navbar-form navbar-right">
-                @*<div class="form-group">
-                        <input type="file" hidden="hidden" class="form-control" name="UploadedFile" id="UploadedFile">
-                    </div>*@
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/home/download'"><i class="fa fa-download"></i> Tính lương</button>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/home/download1'"><i class="fa fa-download"></i> Gộp theo tuần</button>
+                <button id="download" type="button" class="btn btn-primary">
+                    <i class="fa fa-download"></i> Tính lương
+                </button>
+                <button id="download1" type="button" class="btn btn-primary">
+                    <i class="fa fa-download"></i> Gộp theo tuần
+                </button>
             </form>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container -->
@@ -96,6 +131,7 @@
                 <th>Công việc</th>
                 <th>Ca tối</th>
                 <th>Công việc</th>
+                <th>Kick Sales</th>
             </tr>
         </thead>
         <tbody id="target"></tbody>
@@ -112,5 +148,7 @@
         <td>{{Ca2}}</td>
         <td>{{ThoiGian3}}</td>
         <td>{{Ca3}}</td>
+        <td>{{KickSale}}</td>
     </tr>
 </script>
+

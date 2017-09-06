@@ -20,6 +20,7 @@ namespace UM.Controllers
 
         public ActionResult Index()
         {
+            nhanViens = null;
             return View();
         }
 
@@ -30,70 +31,73 @@ namespace UM.Controllers
 
         public JsonResult Upload(FormCollection formCollection)
         {
-            nhanViens = new List<NhanVien>();
             if (Request != null)
             {
                 HttpPostedFileBase file = Request.Files["UploadedFile"];
                 if ((file != null) && (file.ContentLength > 0) && !string.IsNullOrEmpty(file.FileName))
                 {
-                    string fileName = file.FileName;
-                    string fileContentType = file.ContentType;
-                    byte[] fileBytes = new byte[file.ContentLength];
-                    var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
-
-
-                    using (var package = new ExcelPackage(file.InputStream))
+                    try
                     {
-                        var currentSheet = package.Workbook.Worksheets;
-                        var workSheet = currentSheet.First();
-                        var noOfCol = workSheet.Dimension.End.Column;
-                        var noOfRow = workSheet.Dimension.End.Row;
+                        nhanViens = new List<NhanVien>();
+                        string fileName = file.FileName;
+                        string fileContentType = file.ContentType;
+                        byte[] fileBytes = new byte[file.ContentLength];
+                        var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
 
-                        for (int rowIterator = 1; rowIterator <= noOfRow; rowIterator++)
+
+                        using (var package = new ExcelPackage(file.InputStream))
                         {
-                            var nhanVien = new NhanVien
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfCol = workSheet.Dimension.End.Column;
+                            var noOfRow = workSheet.Dimension.End.Row;
+
+                            for (int rowIterator = 1; rowIterator <= noOfRow; rowIterator++)
                             {
-                                HoTen = workSheet.Cells[rowIterator, 1].Text,
-                                DienThoai = workSheet.Cells[rowIterator, 2].Text,
-                                ThoiGian1 = workSheet.Cells[rowIterator, 3].Text,
-                                Ca1 = workSheet.Cells[rowIterator, 4].Text,
-                                ThoiGian2 = workSheet.Cells[rowIterator, 5].Text,
-                                Ca2 = workSheet.Cells[rowIterator, 6].Text,
-                                ThoiGian3 = workSheet.Cells[rowIterator, 7].Text,
-                                Ca3 = workSheet.Cells[rowIterator, 8].Text,
-                                Ngay = workSheet.Cells[rowIterator, 9].Text,
-                            };
-                            nhanViens.Add(nhanVien);
+                                var nhanVien = new NhanVien
+                                {
+                                    HoTen = workSheet.Cells[rowIterator, 1].Text,
+                                    DienThoai = workSheet.Cells[rowIterator, 2].Text,
+                                    ThoiGian1 = workSheet.Cells[rowIterator, 3].Text,
+                                    Ca1 = workSheet.Cells[rowIterator, 4].Text,
+                                    ThoiGian2 = workSheet.Cells[rowIterator, 5].Text,
+                                    Ca2 = workSheet.Cells[rowIterator, 6].Text,
+                                    ThoiGian3 = workSheet.Cells[rowIterator, 7].Text,
+                                    Ca3 = workSheet.Cells[rowIterator, 8].Text,
+                                    KickSale = workSheet.Cells[rowIterator, 9].Text,
+                                    Ngay = workSheet.Cells[rowIterator, 10].Text,
+                                };
+                                nhanViens.Add(nhanVien);
+                            }
                         }
+                        return Json(new { status = true, data = nhanViens }, JsonRequestBehavior.AllowGet);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        return Json(new { status = false, data = ex.Message }, JsonRequestBehavior.AllowGet);
                     }
                 }
             }
-            return Json(new { data = nhanViens }, JsonRequestBehavior.AllowGet);
+            return Json(new { status = false, data = new List<NhanVien>() }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult Download()
         {
             if (nhanViens == null)
             {
-                return Json(new { data = new List<NhanVienView>() }, JsonRequestBehavior.AllowGet);
+                return Json(new { status = false, data = new List<NhanVienView>() }, JsonRequestBehavior.AllowGet);
             }
 
             ExcelPackage excel = new ExcelPackage();
             var workSheet = excel.Workbook.Worksheets.Add("chuongnh");
-            //workSheet.DefaultRowHeight = 12;
-            //Header of table  
-            //  
-            //workSheet.Row(1).Height = 20;
-            //workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
             workSheet.Row(1).Style.Font.Bold = true;
             // Assign borders
-            for (int i = 1; i <= 12; i++)
-            {
-                workSheet.Cells[1, i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                workSheet.Cells[1, i].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                workSheet.Cells[1, i].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                workSheet.Cells[1, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            }
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
             workSheet.Cells[1, 1].Value = "STT";
             workSheet.Cells[1, 2].Value = "Họ tên";
@@ -106,7 +110,8 @@ namespace UM.Controllers
             workSheet.Cells[1, 9].Value = "Ca50";
             workSheet.Cells[1, 10].Value = "Ca80";
             workSheet.Cells[1, 11].Value = "Ca100";
-            workSheet.Cells[1, 12].Value = "Tiền lương";
+            workSheet.Cells[1, 12].Value = "Kick sales";
+            workSheet.Cells[1, 13].Value = "Tiền lương";
             //Body of table  
             //  
 
@@ -161,7 +166,7 @@ namespace UM.Controllers
                               z.ThoiGian3.ToUpper().Contains("TV") == false &&
                                 z.Ca3.ToUpper().Contains("HT") == false &&
                                GetDigit(z.Ca3.Trim()) >= 8).Count(),
-
+                    KickSale = x.Sum(q => GetDigit(q.KickSale) > -1 ? GetDigit(q.KickSale) : 0),
                     Ca100 = x.Count(q => q.Ca1.ToUpper().Contains("HT")) + x.Count(q => q.Ca2.ToUpper().Contains("HT")) + x.Count(q => q.Ca3.ToUpper().Contains("HT")),
                 }).ToList();
 
@@ -179,29 +184,28 @@ namespace UM.Controllers
                 workSheet.Cells[recordIndex, 9].Value = nhanvien.Ca50;
                 workSheet.Cells[recordIndex, 10].Value = nhanvien.Ca80;
                 workSheet.Cells[recordIndex, 11].Value = nhanvien.Ca100;
-                workSheet.Cells[recordIndex, 12].Value = nhanvien.Ca50 * 50000 + nhanvien.Ca80 * 80000 + nhanvien.Ca100 * 100000;
+                workSheet.Cells[recordIndex, 12].Value = nhanvien.KickSale;
+                workSheet.Cells[recordIndex, 13].Value = nhanvien.Ca50 * 50000 + nhanvien.Ca80 * 80000 + nhanvien.Ca100 * 100000+nhanvien.KickSale*50000;
                 //number with 2 decimal places and thousand separator and money symbol
-                workSheet.Cells[recordIndex, 12].Style.Numberformat.Format = "#,##0";
-                for (int i = 1; i <= 12; i++)
+                workSheet.Cells[recordIndex, 13].Style.Numberformat.Format = "#,##0";
+
+                if (nhanvien.TV > 0)
                 {
-                    if (nhanvien.TV > 0)
-                    {
-                        workSheet.Cells[recordIndex, i].Style.Font.Color.SetColor(Color.Red);
-                    }
-                    workSheet.Cells[recordIndex, i].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, i].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, i].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, i].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Font.Color.SetColor(Color.Red);
                 }
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
                 recordIndex++;
             }
-            for (int i = 1; i <= 12; i++)
+            for (int i = 1; i <= 13; i++)
             {
                 workSheet.Column(i).AutoFit();
             }
 
-            string excelName = "chuongnh";
+            string excelName = "luong_chuongnh";
             using (var memoryStream = new MemoryStream())
             {
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -211,24 +215,24 @@ namespace UM.Controllers
                 Response.Flush();
                 Response.End();
             }
-            return Json(new { data = "" }, JsonRequestBehavior.AllowGet);
+            return Json(new { status = true, data = "" }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult Download1()
         {
             if (nhanViens == null)
             {
-                return Json(new { data = new List<NhanVienView>() }, JsonRequestBehavior.AllowGet);
+                return Json(new { status = false, data = new List<NhanVienView>() }, JsonRequestBehavior.AllowGet);
             }
 
             ExcelPackage excel = new ExcelPackage();
             var workSheet = excel.Workbook.Worksheets.Add("chuongnh");
             workSheet.Row(1).Style.Font.Bold = true;
             // Assign borders
-            workSheet.Cells[1, 1, 1, 12].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            workSheet.Cells[1, 1, 1, 12].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            workSheet.Cells[1, 1, 1, 12].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            workSheet.Cells[1, 1, 1, 12].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            workSheet.Cells[1, 1, 1, 13].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
             workSheet.Cells[1, 1].Value = "STT";
             workSheet.Cells[1, 2].Value = "Họ tên";
@@ -241,7 +245,8 @@ namespace UM.Controllers
             workSheet.Cells[1, 9].Value = "Ca50";
             workSheet.Cells[1, 10].Value = "Ca80";
             workSheet.Cells[1, 11].Value = "Ca100";
-            workSheet.Cells[1, 12].Value = "Tiền lương";
+            workSheet.Cells[1, 12].Value = "Kick sales";
+            workSheet.Cells[1, 13].Value = "Tiền lương";
             //Body of table  
             //  
             var nhanviengroup = nhanViens
@@ -303,13 +308,13 @@ namespace UM.Controllers
                            z.ThoiGian3.ToUpper().Contains("TV") == false &&
                              z.Ca3.ToUpper().Contains("HT") == false &&
                             GetDigit(z.Ca3.Trim()) >= 8).Count(),
-
+                 KickSale = x.Sum(q => GetDigit(q.KickSale) > -1 ? GetDigit(q.KickSale) : 0),
                  Ca100 = x.Count(q => q.Ca1.ToUpper().Contains("HT")) + x.Count(q => q.Ca2.ToUpper().Contains("HT")) + x.Count(q => q.Ca3.ToUpper().Contains("HT")),
              }).ToList();
                 workSheet.Cells[recordIndex, 1].Value = "Tuần " + item.FirstOrDefault().Ngay;
-                workSheet.Cells[recordIndex, 1, recordIndex, 12].Merge = true;
-                workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Font.Bold = true;
-                workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Merge = true;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Font.Bold = true;
+                workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 //workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Fill.BackgroundColor.SetColor(Color.Cyan);
 
                 recordIndex++;
@@ -328,29 +333,30 @@ namespace UM.Controllers
                     workSheet.Cells[recordIndex, 9].Value = nhanvien.Ca50;
                     workSheet.Cells[recordIndex, 10].Value = nhanvien.Ca80;
                     workSheet.Cells[recordIndex, 11].Value = nhanvien.Ca100;
-                    workSheet.Cells[recordIndex, 12].Value = nhanvien.Ca50 * 50000 + nhanvien.Ca80 * 80000 + nhanvien.Ca100 * 100000;
+                    workSheet.Cells[recordIndex, 12].Value = nhanvien.KickSale;
+                    workSheet.Cells[recordIndex, 13].Value = nhanvien.Ca50 * 50000 + nhanvien.Ca80 * 80000 + nhanvien.Ca100 * 100000 + nhanvien.KickSale * 50000;
                     //number with 2 decimal places and thousand separator and money symbol
-                    workSheet.Cells[recordIndex, 12].Style.Numberformat.Format = "#,##0";
+                    workSheet.Cells[recordIndex, 13].Style.Numberformat.Format = "#,##0";
 
                     if (nhanvien.TV > 0)
                     {
-                        workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Font.Color.SetColor(Color.Red);
+                        workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Font.Color.SetColor(Color.Red);
                     }
-                    workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    workSheet.Cells[recordIndex, 1, recordIndex, 12].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    workSheet.Cells[recordIndex, 1, recordIndex, 13].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
                     recordIndex++;
                 }
-                for (int i = 1; i <= 12; i++)
+                for (int i = 1; i <= 13; i++)
                 {
                     workSheet.Column(i).AutoFit();
                 }
             }
 
 
-            string excelName = "chuongnh";
+            string excelName = "nhom_chuongnh";
             using (var memoryStream = new MemoryStream())
             {
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -360,7 +366,7 @@ namespace UM.Controllers
                 Response.Flush();
                 Response.End();
             }
-            return Json(new { data = "" }, JsonRequestBehavior.AllowGet);
+            return Json(new { status = true, data = "" }, JsonRequestBehavior.AllowGet);
         }
 
         public int GetDigit(string str)

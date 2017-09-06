@@ -20,6 +20,8 @@ namespace UM.Models
         public string ThoiGian3 { get; set; }
         public string Ca3 { get; set; }
 
+        public string KickSale { get; set; }
+
         public string Ngay { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace UM.Models
         public int Ca80 { get; set; }
         public int Ca100 { get; set; }
 
+        public int KickSale { get; set; }
+
         public decimal Luong { get; set; }
     }
 }
