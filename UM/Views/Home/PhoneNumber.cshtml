@@ -1,6 +1,8 @@
-﻿@{
-    ViewBag.Title = "Tính lương";
+﻿
+@{
+    ViewBag.Title = "Chuẩn hóa dữ liệu";
 }
+
 @section styles{
     <link href="~/Content/alertifyjs/alertify.min.css" rel="stylesheet" />
     @*<link href="~/Content/alertifyjs/themes/bootstrap.min.css" rel="stylesheet" />*@
@@ -10,19 +12,25 @@
 @section scripts{
     <script src="~/Scripts/alertify.min.js"></script>
     <script src="~/Scripts/mustache.js"></script>
-<script src="~/Scripts/tinhluong.controller.js"></script>
+    <script src="~/Scripts/chuanhoadulieu.controller.js"></script>
+
     @*<script>
-            (function (i, s, o, g, r, a, m) {
-                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                    (i[r].q = i[r].q || []).push(arguments)
-                }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-            ga('create', 'UA-106083115-1', 'auto');
-            ga('send', 'pageview');
-
-        </script>*@
+        var pre = document.createElement('pre');
+        //custom style.
+        pre.style.maxHeight = "400px";
+        pre.style.margin = false;
+        pre.style.padding = false;
+        pre.style.whiteSpace = "pre-wrap";
+        pre.style.textAlign = "justify";
+        pre.appendChild(document.createTextNode($('#la').text()));
+        //show as confirm
+        alertify.confirm('Hướng dẫn', pre, function () {
+            //alertify.success('Accepted');
+            //$('#la').hide();
+        }, function () {
+            //alertify.error('Declined');
+        }).set({ labels: { ok: 'Tôi hiểu rồi', cancel: 'Chưa hiểu' }, padding: false });
+    </script>*@
 }
 
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -37,28 +45,20 @@
             </button>
             @*<a class="navbar-brand" href="/">chuongnh</a>*@
         </div>
-
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form action="/home/upload" id="form" enctype="multipart/form-data" class="navbar-form navbar-left">
+            <form action="/home/phonenumberedit" id="form" enctype="multipart/form-data" class="navbar-form navbar-left">
                 <div class="form-group">
                     <input type="file" class="form-control" name="UploadedFile" id="UploadedFile">
                 </div>
-                @* <button type="submit" id="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Tải lên...</button>*@
-                <button id="download" type="button" class="btn btn-default">
-                    <i class="fa fa-download"></i> Tính lương
-                </button>
-                <button id="download1" type="button" class="btn btn-default">
-                    <i class="fa fa-object-group"></i> Gộp theo tuần
+                <button id="phonenumberedit" type="button" class="btn btn-default">
+                    <i class="fa fa-download"></i> Chuẩn hóa
                 </button>
             </form>
             <form action="" enctype="multipart/form-data" class="navbar-form navbar-right">
-                <button id="phone" type="button" class="btn btn-default" onclick=" window.location.href = '/home/phonenumber'">
-                    <i class="fa fa-phone-square"></i> Chuẩn hóa dữ liệu
+                <button id="home" type="button" class="btn btn-default" onclick=" window.location.href = '/home'">
+                    <i class="fa fa-home"></i> Tính lương
                 </button>
-                @*<button id="download1" type="button" class="btn btn-primary">
-                        <i class="fa fa-download"></i> Gộp theo tuần
-                    </button>*@
             </form>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container -->
@@ -71,13 +71,7 @@
                 <th>STT</th>
                 <th>Họ tên</th>
                 <th>Điện thoại</th>
-                <th>Ca sáng</th>
-                <th>Công việc</th>
-                <th>Ca chiều</th>
-                <th>Công việc</th>
-                <th>Ca tối</th>
-                <th>Công việc</th>
-                <th>Kick Sales</th>
+                <th>Địa chỉ</th>
             </tr>
         </thead>
         <tbody id="target"></tbody>
@@ -88,13 +82,15 @@
         <td>{{Id}}</td>
         <td>{{HoTen}}</td>
         <td>{{DienThoai}}</td>
-        <td>{{ThoiGian1}}</td>
-        <td>{{Ca1}}</td>
-        <td>{{ThoiGian2}}</td>
-        <td>{{Ca2}}</td>
-        <td>{{ThoiGian3}}</td>
-        <td>{{Ca3}}</td>
-        <td>{{KickSale}}</td>
+        <td>{{DiaChi}}</td>
     </tr>
 </script>
 
+<div id="la" hidden>
+
+    <b>Chuẩn hóa dữ liệu là gì?</b>
+    @*<p>Chuẩn hóa dữ liệu là 1 chức năng cho phép chỉnh sửa lại số điện thoại 1 cách tự động.</p>
+    <p>VÍ DỤ: </p>
+    <p>Tôi có 1 danh sách các số điện thoại theo định dạng</p>*@
+
+</div>
