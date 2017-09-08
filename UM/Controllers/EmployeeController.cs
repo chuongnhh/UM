@@ -37,7 +37,9 @@ namespace UM.Controllers
             {
                 data = lstEmployee
                 .Where(x => x.Name.Contains(txtsearch) ||
-                x.PhoneNumber.Contains(txtsearch)).ToList()
+                x.PhoneNumber.Contains(txtsearch) ||
+                txtsearch.Contains(x.Name) ||
+                txtsearch.Contains(x.PhoneNumber)).ToList()
             },
                 JsonRequestBehavior.AllowGet);
         }

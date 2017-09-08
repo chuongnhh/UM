@@ -67,6 +67,86 @@
                 processData: false
             })
         })
+
+
+        $(document).on('change', '.tv1', function () {
+            var id = $(this).data('id');
+            if (this.checked == true) {
+                $('#goi1-' + id).prop('disabled', true);
+                $('#ks1-' + id).prop('disabled', true);
+                $('#note1-' + id).prop('disabled', true);
+
+                $('#cf1-' + id).prop('disabled', true);
+                $('#ht1-' + id).prop('disabled', true);
+                $('#vt1-' + id).prop('disabled', true);
+            }
+            else {
+                $('#goi1-' + id).prop('disabled', false);
+                $('#ks1-' + id).prop('disabled', false);
+                $('#note1-' + id).prop('disabled', false);
+
+                $('#cf1-' + id).prop('disabled', false);
+                $('#ht1-' + id).prop('disabled', false);
+                $('#vt1-' + id).prop('disabled', false);
+            }
+        })
+        $(document).on('change', '.tv2', function () {
+            var id = $(this).data('id');
+            if (this.checked == true) {
+                $('#goi2-' + id).prop('disabled', true);
+                $('#ks2-' + id).prop('disabled', true);
+                $('#note2-' + id).prop('disabled', true);
+
+                $('#cf2-' + id).prop('disabled', true);
+                $('#ht2-' + id).prop('disabled', true);
+                $('#vt2-' + id).prop('disabled', true);
+            }
+            else {
+                $('#goi2-' + id).prop('disabled', false);
+                $('#ks2-' + id).prop('disabled', false);
+                $('#note2-' + id).prop('disabled', false);
+
+                $('#cf2-' + id).prop('disabled', false);
+                $('#ht2-' + id).prop('disabled', false);
+                $('#vt2-' + id).prop('disabled', false);
+            }
+        })
+        $(document).on('change', '.tv3', function () {
+            var id = $(this).data('id');
+            if (this.checked == true) {
+                $('#goi3-' + id).prop('disabled', true);
+                $('#ks3-' + id).prop('disabled', true);
+                $('#note3-' + id).prop('disabled', true);
+
+                $('#cf3-' + id).prop('disabled', true);
+                $('#ht3-' + id).prop('disabled', true);
+                $('#vt3-' + id).prop('disabled', true);
+            }
+            else {
+                $('#goi1-' + id).prop('disabled', false);
+                $('#ks1-' + id).prop('disabled', false);
+                $('#note1-' + id).prop('disabled', false);
+
+                $('#cf1-' + id).prop('disabled', false);
+                $('#ht1-' + id).prop('disabled', false);
+                $('#vt1-' + id).prop('disabled', false);
+            }
+        })
+
+        $(document).on('click', '.delete', function (e) {
+            e.preventDefault();
+            var name = $(this).data('name');
+            var id = $(this).data('id');
+
+            alertify.confirm('Xác nhận xóa', 'Bạn muốn xóa ' + name + '?',
+                function () {
+                    $('#r-' + id).remove();
+                    alertify.success('Đã xóa ' + name);
+                }
+                , function () {
+                    alertify.error('Chưa xóa ' + name);
+                }).set({ labels: { ok: 'Đồng ý', cancel: 'Hủy' }, padding: true });;
+        })
     </script>
 
 }
@@ -119,15 +199,126 @@
     </table>
 </div>
 <script id="template" type="x-tmpl-mustache">
-    <tr>
+    <tr id="r-{{Id}}">
         <td>{{Id}}</td>
-        <td>{{Name}}</td>
+        <td><b>{{Name}}</b></td>
         <td>{{PhoneNumber}}</td>
-        <td>{{CaSang}}</td>
-        <td>{{CaChieu}}</td>
-        <td>{{CaToi}}</td>
         <td>
-            <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-remove"></i> Xóa</a>
+            <form action="/home/phonenumberedit" id="form1-{{Id}}" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="goi1" id="goi1-{{Id}}" placeholder="Số gọi được">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="ks1" id="ks1-{{Id}}" placeholder="Số kick sales">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" class="tv1" data-id="{{Id}}" id="tv1-{{Id}}">Thử việc
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="cf1-{{Id}}">CF
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="ht1-{{Id}}">Hội thảo
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="vt1-{{Id}}">Viết Thư
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="note1" id="note1-{{Id}}" placeholder="Thông tin thêm">
+                    </div>
+                </div>
+            </form>
+        </td>
+        <td>
+            <form action="/home/phonenumberedit" id="form2-{{Id}}" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="goi2" id="goi2-{{Id}}" placeholder="Số gọi được">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="ks2" id="ks2-{{Id}}" placeholder="Số kick sales">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" class="tv2" data-id="{{Id}}" id="tv2-{{Id}}">Thử việc
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="cf2-{{Id}}">CF
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="ht2-{{Id}}">Hội thảo
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="vt2-{{Id}}">Viết Thư
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="note2" id="note2-{{Id}}" placeholder="Thông tin thêm">
+                    </div>
+                </div>
+            </form>
+        </td>
+        <td>
+            <form action="/home/phonenumberedit" id="form3-{{Id}}" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="goi3" id="goi3-{{Id}}" placeholder="Số gọi được">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" name="ks3" id="ks3-{{Id}}" placeholder="Số kick sales">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" class="tv3" data-id="{{Id}}" id="tv3-{{Id}}">Thử việc
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="cf3-{{Id}}">CF
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="ht3-{{Id}}">Hội thảo
+                            </label>
+                            <label>
+                                <input type="checkbox" data-id="{{Id}}" id="vt3-{{Id}}">Viết Thư
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="note1" id="note3-{{Id}}" placeholder="Thông tin thêm">
+                    </div>
+                </div>
+            </form>
+        </td>
+        <td>
+            <a href="/emmployee/delete/{{Name}}" data-name="{{Name}}" data-id="{{Id}}" class="btn btn-danger btn-sm delete"><i class="fa fa-remove"></i> Xóa</a>
         </td>
     </tr>
 </script>

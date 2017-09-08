@@ -73,58 +73,72 @@
 alertify.YoutubeDialog('1m_9z7Kxhko').set({ frameless: false });
 
 function notify() {
-            console.log('notify');
-            alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
-                'Bạn chưa tải tệp lên mừ, làm sao mà tui xử lý đây!').set('label', 'Tôi đã hiểu rồi');
-        }
+    console.log('notify');
+    alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
+        'Bạn chưa tải tệp lên mừ, làm sao mà tui xử lý đây!').set('label', 'Tôi đã hiểu rồi');
+}
 
-        $('#phonenumberedit').off('click').on('click', notify);
+$('#phonenumberedit').off('click').on('click', notify);
 
-        $('#UploadedFile').change(function () {
-            if ($(this).val().length > 0) {
-                $('#form').submit();
+$('#UploadedFile').change(function () {
+    if ($(this).val().length > 0) {
+        $('#form').submit();
+    }
+});
+
+$('#form').on('submit', function (e) {
+    e.preventDefault();
+
+    var data = new FormData(this);
+
+    $.ajax({
+        type: 'post',
+        url: '/filterdata/UploadPhoneNumber',
+        data: data,
+        success: function (res) {
+            console.log(res.status);
+            if (res.status == false && res.large == false) {
+                alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
+                    'Bạn chưa chọn tệp hoặc là tệp không đúng định dạng, bạn vui lòng kiểm tra lại trước khi tải lên.').set('label', 'Tôi đã hiểu rồi');
+
+                $('#phonenumberedit').off('click').on('click', notify);
             }
-        });
+            if (res.status == false && res.large == true) {
+                alertify.alert('Anh Chương có lời nhắn nhủ với bạn!', res.data + '<br><a href="/filterdata/DownloadPhoneNumber"> Vui lòng click vào đây để lọc dữ liệu</a>').set('label', 'Tôi đã hiểu rồi');
+                //window.location.href = '/filterdata/DownloadPhoneNumber';
+            }
+            else {
+                var data = res.data;
+                var rendered = '';
+                var template = $('#template').html();
 
-        $('#form').on('submit', function (e) {
-            e.preventDefault();
+                var stt = 1;
+                //for (var d in data) {
+                //    rendered += Mustache.render(template, {
+                //        Id: stt++,
+                //        HoTen: d.HoTen,
+                //        DienThoai: d.DienThoai,
+                //        DiaChi: d.DiaChi,
+                //    });
+                //}
+                $.each(data, function (i, item) {
+                    rendered += Mustache.render(template, {
+                        Id: i + 1,
+                        HoTen: item.HoTen,
+                        DienThoai: item.DienThoai,
+                        DiaChi: item.DiaChi,
+                    });
+                });
+                $('#target').html(rendered);
 
-            var data = new FormData(this);
-
-            $.ajax({
-                type: 'post',
-                url: '/home/UploadPhoneNumber',
-                data: data,
-                success: function (res) {
-                    console.log(res.status);
-                    if (res.status == false) {
-                        alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
-                            'Bạn chưa chọn tệp hoặc là tệp không đúng định dạng, bạn vui lòng kiểm tra lại trước khi tải lên.').set('label', 'Tôi đã hiểu rồi');
-
-                        $('#phonenumberedit').off('click').on('click', notify);
-                    }
-                    else {
-                        var data = res.data;
-                        var rendered = '';
-                        var template = $('#template').html();
-                        $.each(data, function (i, item) {
-                            rendered += Mustache.render(template, {
-                                Id: i + 1,
-                                HoTen: item.HoTen,
-                                DienThoai: item.DienThoai,
-                                DiaChi: item.DiaChi,
-                            });
-                        });
-                        $('#target').html(rendered);
-
-                        $('#phonenumberedit').off('click').on('click', function () {
-                            console.log('download');
-                            window.location.href = '/home/DownloadPhoneNumber';
-                        });
-                    }
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            })
-        })
+                $('#phonenumberedit').off('click').on('click', function () {
+                    console.log('download');
+                    window.location.href = '/filterdata/DownloadPhoneNumber';
+                });
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    })
+})

@@ -102,7 +102,6 @@ $('#form').on('submit', function (e) {
         url: '/home/upload',
         data: data,
         success: function (res) {
-            console.log(res.status);
             if (res.status == false) {
                 alertify.alert('Anh Chương có lời nhắn nhủ với bạn!',
                     'Bạn chưa chọn tệp hoặc là tệp không đúng định dạng, bạn vui lòng kiểm tra lại trước khi tải lên.').set('label', 'Tôi đã hiểu rồi');

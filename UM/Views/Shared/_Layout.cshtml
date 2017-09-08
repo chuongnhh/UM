@@ -7,15 +7,16 @@
     <title>@ViewBag.Title - chuongnh</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/sticky-footer-navbar.css" rel="stylesheet" />
     @RenderSection("styles", required: false)
 </head>
 <body>
     @RenderBody()
-    <footer class="container-fluid">
+    <footer class="container-fluid footer">
         <hr />
         <p>
-           Copyright &copy; @DateTime.Now.Year - <a href="https://www.facebook.com/chuongnh.hcm" target="_blank">Nguyễn Hoàng Chương</a>. All right reserved.
-           <span class="pull-right">Liên hệ và hỗ trợ: <b>0164 7931 390</b> - CTV Chương - Cty BHNT Dai-Ichi :))</span>
+            Copyright &copy; @DateTime.Now.Year - <a href="https://www.facebook.com/chuongnh.hcm" target="_blank">Nguyễn Hoàng Chương</a>. All right reserved.
+            <span class="pull-right">Liên hệ và hỗ trợ: <b>0164 7931 390</b> - CTV Chương - Cty BHNT Dai-Ichi :))</span>
         </p>
     </footer>
     @Scripts.Render("~/bundles/jquery")
