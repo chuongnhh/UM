@@ -493,7 +493,7 @@ namespace UM.Controllers
                     DiaChi = x.DiaChi,
                     DienThoai = GetDigit(x.DienThoai).ToString()
 
-                }).ToList();
+                }).Distinct().ToList();
 
 
             var lstViettel = lstPhoneNumber

@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "Chấm công";
+}
+
+
+@section styles{
+    <link href="~/Content/alertifyjs/alertify.min.css" rel="stylesheet" />
+    @*<link href="~/Content/alertifyjs/themes/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="~/Content/alertifyjs/themes/default.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+}
+@section scripts{
+    <script src="~/Scripts/alertify.min.js"></script>
+    <script src="~/Scripts/mustache.js"></script>
+    <script>
+        $.ajax({
+            type: 'get',
+            url: '/employee/getdata',
+            success: function (res) {
+                var data = res.data;
+                var rendered = '';
+                var template = $('#template').html();
+                $.each(data, function (i, item) {
+                    rendered += Mustache.render(template, {
+                        Id: i + 1,
+                        Name: item.Name,
+                        PhoneNumber: item.PhoneNumber
+                    });
+                });
+                $('#target').html(rendered);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        })
+
+        $('#search').on('input', function (e) {
+            $('#form').submit();
+        })
+
+        $('#form').on('submit', function (e) {
+            e.preventDefault();
+
+            var data = $('#search').val();
+            console.log(data);
+
+            $.ajax({
+                type: 'post',
+                url: '/employee/search?txtsearch=' + data,
+                success: function (res) {
+                    var data = res.data;
+                    console.log(data);
+                    var rendered = '';
+                    var template = $('#template').html();
+                    $.each(data, function (i, item) {
+                        rendered += Mustache.render(template, {
+                            Id: i + 1,
+                            Name: item.Name,
+                            PhoneNumber: item.PhoneNumber
+                        });
+                    });
+                    $('#target').html(rendered);
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            })
+        })
+    </script>
+
+}
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @*<a class="navbar-brand" href="/">chuongnh</a>*@
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form action="/home/phonenumberedit" id="form" enctype="multipart/form-data" class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="txtsearch" id="search" placeholder="Nhập tên hoặc SĐT để tìm">
+                </div>
+                <button id="phonenumberedit" type="button" class="btn btn-default">
+                    <i class="fa fa-download"></i> Xuất báo cáo
+                </button>
+            </form>
+            <form action="" enctype="multipart/form-data" class="navbar-form navbar-right">
+                <button id="home" type="button" class="btn btn-default" onclick=" window.location.href='/home' ">
+                    <i class="fa fa-home"></i> Tính lương
+                </button>
+            </form>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</nav>
+
+<div class="container-fluid">
+    <table class="table table-responsive table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ tên</th>
+                <th>Điện thoại</th>
+                <th>Ca sáng (9:00)</th>
+                <th>Ca chiều (14:00)</th>
+                <th>Ca tối (18:00)</th>
+                <th>Xóa</th>
+            </tr>
+        </thead>
+        <tbody id="target"></tbody>
+    </table>
+</div>
+<script id="template" type="x-tmpl-mustache">
+    <tr>
+        <td>{{Id}}</td>
+        <td>{{Name}}</td>
+        <td>{{PhoneNumber}}</td>
+        <td>{{CaSang}}</td>
+        <td>{{CaChieu}}</td>
+        <td>{{CaToi}}</td>
+        <td>
+            <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-remove"></i> Xóa</a>
+        </td>
+    </tr>
+</script>

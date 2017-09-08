@@ -11,18 +11,6 @@
     <script src="~/Scripts/alertify.min.js"></script>
     <script src="~/Scripts/mustache.js"></script>
 <script src="~/Scripts/tinhluong.controller.js"></script>
-    @*<script>
-            (function (i, s, o, g, r, a, m) {
-                i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                    (i[r].q = i[r].q || []).push(arguments)
-                }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                    m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-            ga('create', 'UA-106083115-1', 'auto');
-            ga('send', 'pageview');
-
-        </script>*@
 }
 
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -35,7 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @*<a class="navbar-brand" href="/">chuongnh</a>*@
+            <a class="navbar-brand visible-sm"  href="/">chuongnh</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -54,7 +42,7 @@
             </form>
             <form action="" enctype="multipart/form-data" class="navbar-form navbar-right">
                 <button id="phone" type="button" class="btn btn-default" onclick=" window.location.href = '/home/phonenumber'">
-                    <i class="fa fa-phone-square"></i> Chuẩn hóa dữ liệu
+                    <i class="fa fa-filter"></i> Lọc dữ liệu
                 </button>
                 @*<button id="download1" type="button" class="btn btn-primary">
                         <i class="fa fa-download"></i> Gộp theo tuần
